@@ -1,6 +1,6 @@
 import xadmin
 
-from apps.courses.models import Course, Lesson, CourseResource, Video
+from apps.courses.models import Course, Lesson, CourseResource, Video, CourseTag
 
 
 class GlobalSettings(object):
@@ -41,9 +41,16 @@ class CourseResourceAdmin(object):
     list_filter = ['parent_course', 'name', 'download', 'add_time']
 
 
+class CourseTagAdmin(object):
+    list_display = ['tar_course', 'tag', 'add_time']
+    search_fields = ['tar_course', 'tag']
+    list_filter = ['tar_course', 'tag']
+
+
 xadmin.site.register(Course, CourseAdmin)
 xadmin.site.register(Lesson, LessonAdmin)
 xadmin.site.register(Video, VideoAdmin)
 xadmin.site.register(CourseResource, CourseResourceAdmin)
+xadmin.site.register(CourseTag, CourseTagAdmin)
 xadmin.site.register(xadmin.views.CommAdminView, GlobalSettings)
 xadmin.site.register(xadmin.views.BaseAdminView, BaseSettings)

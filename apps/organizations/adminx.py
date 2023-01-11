@@ -3,6 +3,7 @@ import xadmin
 from apps.organizations.models import Teacher, CourseOrg, CityDict
 
 
+
 # xadmin允许我们不继承任何东西
 class TeacherAdmin(object):
     list_display = ['org', 'name', 'work_years', 'work_company']
@@ -21,7 +22,6 @@ class CityDictAdmin(object):
     search_fields = ['name', 'desc']
     list_filter = ['name', 'desc', 'add_time']
     list_editable = ['name', 'desc']
-
 
 xadmin.site.register(Teacher, TeacherAdmin)
 xadmin.site.register(CourseOrg, CourseOrgAdmin)

@@ -2,7 +2,7 @@ import django.db.models
 from django.db import models
 
 from apps.users.models import BaseModel
-from apps.organizations.models import Teacher
+from apps.organizations.models import Teacher, CourseOrg
 # Create your models here.
 
 # 1.设计表结构有几个重要的点
@@ -14,8 +14,11 @@ from apps.organizations.models import Teacher
 
 
 class Course(BaseModel):
-    name = models.CharField(verbose_name='course name', max_length=64)
+    # less join > more fileds
     course_teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, verbose_name='Lecturer', default='')
+    course_org = models.ForeignKey(CourseOrg, on_delete=models.CASCADE, default='')
+    name = models.CharField(verbose_name='course name', max_length=64)
+
     descr = models.CharField(verbose_name='course description', max_length=400)
     learn_times = models.IntegerField(default=0, verbose_name='courses time min')
     degree = models.CharField(verbose_name='course level', choices=(
@@ -27,12 +30,13 @@ class Course(BaseModel):
     fav_num = models.IntegerField(default=0, verbose_name='favorite number')
     click_num = models.IntegerField(default=0, verbose_name='click times')
     image = models.ImageField(upload_to="courses/%Y/%m", verbose_name=u"course pict", max_length=100)
-    click_nums = models.IntegerField(default=0, verbose_name=u"click time")
+    notice = models.CharField(verbose_name='course statement', max_length=100, default='')
     category = models.CharField(default='backend', max_length=20, verbose_name=u"courses category")
     tag = models.CharField(default="", verbose_name=u"course tag", max_length=10)
     youneed_know = models.CharField(default="", max_length=300, verbose_name="must know about course")
     teacher_tell = models.CharField(default="", max_length=300, verbose_name="advice")
     detail = models.TextField(verbose_name=u"course detail",default='')
+    if_classical = models.BooleanField(default=False, verbose_name='if classical')
 
     class Meta:
         verbose_name = 'course information'
@@ -40,6 +44,15 @@ class Course(BaseModel):
 
     def __str__(self):
         return self.name  # display course name
+
+    def get_lesson_num(self):
+        # obtain outer keys data
+        return self.lesson_set.all().count()
+
+    def get_all_tags(self):
+        # get all tags
+        all_tags = self.coursetag_set.all()
+        return [tag.tag for tag in all_tags]
 
 
 class Lesson(BaseModel):
@@ -81,5 +94,20 @@ class CourseResource(BaseModel):
 
     def __str__(self):
         return self.name
+
+
+class CourseTag(BaseModel):
+    # one(course) vs multi(tags)
+    tar_course = models.ForeignKey(to=Course, on_delete=models.CASCADE, verbose_name='lecture')
+    tag = models.CharField(max_length=100, verbose_name='tag')
+
+    class Meta:
+        verbose_name = 'course vs tag'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.tag
+
+
 
 

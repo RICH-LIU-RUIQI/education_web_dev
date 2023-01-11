@@ -1,3 +1,4 @@
+django == 2.2
 django-crispy-forms
 django-import-export
 django-reversion
@@ -8,3 +9,5 @@ six
 xlwt
 xlsxwriter
 requests
+pillow
+django-pure-pagination

@@ -17,6 +17,9 @@ class UserAsk(BaseModel):
         verbose_name = "user request"
         verbose_name_plural = verbose_name
 
+    def __str__(self):
+        return "{name}_{course}({mobile})".format(name=self.name, course=self.course_name, mobile=self.mobile)
+
 
 class CourseComments(BaseModel):
     user = models.ForeignKey(UserProfile, verbose_name="user", on_delete=models.CASCADE)
@@ -33,7 +36,9 @@ class UserFavorite(BaseModel):
     user = models.ForeignKey(UserProfile, verbose_name="user", on_delete=models.CASCADE)
     fav_id = models.IntegerField(default=0, verbose_name="id")
     fav_type = models.IntegerField(choices=(
-        (1,"course name"),(2,"course organization"),(3,"lecturer")),
+        (1, "course name"),
+        (2, "course organization"),
+        (3, "lecturer")),
         default=1, verbose_name="favorite type")
 
     class Meta:

@@ -9,6 +9,9 @@ from django.contrib.auth.models import AbstractUser
 class BaseModel(models.Model):
     add_time = models.DateTimeField(verbose_name='data add time', default=datetime.now)  # not method
 
+    class Meta:
+        abstract = True
+
 
 class UserProfile(AbstractUser):
     nick_name = models.CharField(verbose_name='client nickname', max_length=50, default='')
@@ -22,7 +25,7 @@ class UserProfile(AbstractUser):
         verbose_name = 'client information'
         verbose_name_plural = verbose_name
 
-    def __unicode__(self):
+    def __str__(self):
         if self.nick_name:
             return self.nick_name
         else:

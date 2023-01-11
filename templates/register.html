@@ -2,14 +2,14 @@
 <!DOCTYPE html>
 <!-- saved from url=(0036)http://192.168.43.243:8000/register/ -->
 <html>
-
+{% load staticfiles %}
 <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <title>多米乐首页</title>
-    <link rel="stylesheet" type="text/css" href="/static/css/reset.css">
-    <link rel="stylesheet" type="text/css" href="/static/css/login.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/reset.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
 
 </head>
 <body>
@@ -85,30 +85,34 @@
                     <h2 class="active">手机注册</h2>
                 </div>
                 <div class="tab-form">
-                    <form id="mobile_register_form" method="post" action="/register/" autocomplete="off">
+                    <form id="mobile_register_form" method="post" action="{% url 'register' %}" autocomplete="off">
+                        {% csrf_token %}
 
-                        <div class="form-group marb20 ">
+                        <div class="form-group marb20 {% if register_get_form.errors.mobile %}errorput{% endif %}">
                             <input id="jsRegMobile" name="mobile" type="text" placeholder="请输入您的手机号码">
                         </div>
                         <div class="form-group marb20 blur" id="jsRefreshCode">
-                            <img src="/captcha/image/5b0fe7811ef645d9cb94cc7af579e855ec49819a/" alt="captcha" class="captcha" />
-<input type="hidden" name="captcha_0" value="5b0fe7811ef645d9cb94cc7af579e855ec49819a" required id="id_captcha_0"><input type="text" name="captcha_1" required id="id_captcha_1" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false">
+                            {{ register_get_form.captcha }}
+                            <input name="captcha" type="text" placeholder="请输入图中验证码">
                         </div>
-                        <div class="clearfix">
-                            <div class="form-group marb8 verify-code ">
-                                <input id="jsPhoneRegCaptcha" name="code" type="text" placeholder="输入手机验证码">
-                            </div>
-                            <input class="verify-code-btn sendcode" id="jsSendCode" value="发送验证码">
-                        </div>
-                        <div class="form-group marb8 ">
+{#                        <div class="clearfix">#}
+{#                            <div class="form-group marb8 verify-code ">#}
+{#                                <input id="jsPhoneRegCaptcha" name="code" type="text" placeholder="输入手机验证码">#}
+{#                            </div>#}
+{#                            <input class="verify-code-btn sendcode" id="jsSendCode" value="发送验证码">#}
+{#                        </div>#}
+                        <div class="form-group marb8 {% if register_get_form.errors.mobile %}errorput{% endif %}">
                             <input id="jsPhoneRegPwd" name="password" type="password" placeholder="请输入6-20位非中文字符密码">
                         </div>
-                        <div class="error btns" id="jsMobileTips" ></div>
+                        <div class="error btns" id="jsMobileTips" >
+                            {% for key, error in register_get_form.errors.items %}{{ error }}{% endfor %}
+                        </div>
                         <div class="auto-box marb8">
 
                         </div>
-                        <input class="btn btn-green" id="jsMobileRegBtn" type="button" value="注册并登录">
-                    <input type="hidden" name="csrfmiddlewaretoken" value="r20XuUA2E7Aw0becQXwBbl57JQLgmKXrBBLY1FlPzoKyjZxXrwHVn9cvfwDxXFco">
+                        <input  class="btn btn-green" name="register-user" type="submit" placeholder="register">
+{#                        <input class="btn btn-green" id="jsMobileRegBtn" type="button" value="注册并登录">#}
+{#                    <input type="hidden" name="csrfmiddlewaretoken" value="r20XuUA2E7Aw0becQXwBbl57JQLgmKXrBBLY1FlPzoKyjZxXrwHVn9cvfwDxXFco">#}
                     </form>
                 </div>
                 <p class="form-p">已有账号？<a href="http://192.168.43.243:8000/login/">[立即登录]</a></p>
@@ -118,10 +122,10 @@
 </section>
 
 <input id="isLogin" type="hidden" value="False">
-<script src="/static/js/jquery.min.js" type="text/javascript"></script>
-<script src="/static/js/unslider.js" type="text/javascript"></script>
-<script src="/static/js/validateDialog.js" type="text/javascript"></script>
-<script src="/static/js/login.js" type="text/javascript"></script>
+<script src="{% static 'js/jquery.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/unslider.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/validateDialog.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/login.js' %}" type="text/javascript"></script>
 
 </body></html>
 

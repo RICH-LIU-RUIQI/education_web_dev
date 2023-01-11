@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'apps.organizations.apps.OrganizationsConfig',
     'crispy_forms',
     'xadmin.apps.XAdminConfig',
+    'captcha',
+    'pure_pagination',
 
 ]
 
@@ -70,6 +72,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',  # add default root in templates
+
             ],
         },
     },
@@ -84,7 +88,7 @@ WSGI_APPLICATION = 'mx_online.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # mysql
-        'NAME': 'mx_ds',  # database name
+        'NAME': 'mooc_ds',  # database name
         'USER': 'root',
         'PASSWORD': 'qq980919',
         'HOST': '127.0.0.1',
@@ -113,6 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'users.UserProfile'
 
+AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.AllowAllUsersModelBackend']
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -136,3 +141,13 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),  # for whole project
     # os.path.join(BASE_DIR, 'apps', 'msg_form', "static"),
 )
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+PAGINATION_SETTINGS = {
+    'PAGE_RANGE_DISPLAYED': 10,
+    'MARGIN_PAGES_DISPLAYED': 2,
+
+    'SHOW_FIRST_PAGE_WHEN_INVALID': True,
+}

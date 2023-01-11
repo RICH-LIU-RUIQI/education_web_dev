@@ -15,7 +15,7 @@ UserProfile = get_user_model()  # get from setting
 
 class CityDict(BaseModel):
     name = models.CharField(max_length=20, verbose_name="city")
-    desc = models.CharField(max_length=200, verbose_name="desp")
+    desc = models.CharField(max_length=200, verbose_name="description")
 
     class Meta:
         verbose_name = "org city"
@@ -28,7 +28,7 @@ class CityDict(BaseModel):
 class CourseOrg(BaseModel):
     name = models.CharField(max_length=50, verbose_name="org name")
     desc = models.TextField(verbose_name='description of org')
-    tag = models.CharField(default="country known", max_length=10, verbose_name="organization")
+    tag = models.CharField(default="konwn", max_length=10, verbose_name="organization reputation")
     category = models.CharField(default="pxjg", verbose_name=u"organization category", max_length=20,
                                 choices=(("pxjg","organization"),("gr","personal"),("gx","college")))
     click_nums = models.IntegerField(default=0, verbose_name=u"click")
@@ -38,10 +38,48 @@ class CourseOrg(BaseModel):
     city = models.ForeignKey(CityDict, verbose_name=u"city", on_delete=models.CASCADE)
     students = models.IntegerField(default=0, verbose_name=u"people learn")
     course_nums = models.IntegerField(default=0, verbose_name=u"course number")
+    is_auth = models.BooleanField(default=False, verbose_name='if auth')
+    is_gold = models.BooleanField(default=False, verbose_name='if gold')
 
     class Meta:
         verbose_name = u"organization"
         verbose_name_plural = verbose_name
+
+    def get_all_courses(self, num=None):
+        """
+
+        :param num: the displayed courses from all courses . If None, return all courses
+        :return:
+        """
+        if num:
+            all_courses = self.course_set.filter(if_classical=True)[:num]  # opposite foreign key
+        else:
+            all_courses = self.course_set.filter(if_classical=True)  # opposite foreign key
+        return all_courses
+
+    def get_all_teachers(self, num=None):
+        """
+
+        :param num: the displayed courses from all courses . If None, return all courses
+        :return:
+        """
+        if num:
+            all_courses = self.teacher_set.filter()[:num]  # opposite foreign key
+        else:
+            all_courses = self.teacher_set.filter()  # opposite foreign key
+        return all_courses
+
+    def get_all_course(self, num=None):
+        """
+
+        :param num: the displayed courses from all courses . If None, return all courses
+        :return:
+        """
+        if num:
+            all_courses = self.course_set.filter()[:num]  # opposite foreign key
+        else:
+            all_courses = self.course_set.filter()  # opposite foreign key
+        return all_courses
 
     # def get_teacher_nums(self):
     #     #获取课程机构的教师数量
@@ -71,5 +109,5 @@ class Teacher(BaseModel):
     def __str__(self):
         return self.name
 
-    # def get_course_nums(self):
-    #     return self.course_set.all().count()
+    def get_course_nums(self):
+        return self.course_set.all().count()
