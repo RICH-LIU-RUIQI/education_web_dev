@@ -4,26 +4,21 @@ from django import forms
 from apps.operations.models import UserAsk
 
 
-# class AddAskForm(forms.Form):
-#     name = forms.CharField(required=True, min_length=2, max_length=20)
-#     mobile = forms.CharField(required=True, max_length=11)
-#     course_name = forms.CharField(required=True, max_length=50)
-
-
 class AddAskForm(forms.ModelForm):
+    mobile = forms.CharField(max_length=11, min_length=11, required=True)
     class Meta:
         model = UserAsk
-        # fields = "__all__"
-        # exclude = ['add_time']
-        fields = ['name', 'mobile', 'course_name']
+        fields = ["name", "mobile", "course_name"]
 
-    # def clean_mobile(self):
-    #     input_mobile = self.cleaned_data['mobile']
-    #     regex_input_mobile = '/^1[0-9]$/'
-    #     p = re.compile(regex_input_mobile)
-    #     if p.match(input_mobile):
-    #         return input_mobile
-    #     else:
-    #         return forms.ValidationError('Incorrect mobile')
-
-
+    def clean_mobile(self):
+        """
+        验证手机号码是否合法
+        :return:
+        """
+        mobile = self.cleaned_data["mobile"]
+        regex_mobile = "^1[358]\d{9}$|^147\d{8}$|^176\d{8}$"
+        p = re.compile(regex_mobile)
+        if p.match(mobile):
+            return mobile
+        else:
+            raise forms.ValidationError("手机号码非法", code="mobile_invalid")

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <!-- saved from url=(0036)http://192.168.43.243:8000/register/ -->
 <html>
@@ -15,7 +14,7 @@
 <body>
 <div class="loginbox dialogbox">
     <h1>账号登录</h1>
-    <div class="close jsCloseDialog"><img src="/static/images/dig_close.png"></div>
+    <div class="close jsCloseDialog"><img src="{% static 'images/dig_close.png' %}"></div>
     <div class="cont">
         <form id="jsLoginForm" autocomplete="off">
 
@@ -43,7 +42,7 @@
     <!--提示弹出框-->
     <div class="successbox dialogbox" id="jsSuccessTips">
         <h1>成功提交</h1>
-        <div class="close jsCloseDialog"><img src="/static/images/dig_close.png"></div>
+        <div class="close jsCloseDialog"><img src="{% static 'images/dig_close.png' %}"></div>
         <div class="cont">
             <h2>您的需求提交成功！</h2>
             <p></p>
@@ -57,8 +56,8 @@
             <p class="fl hd-tips">多米乐，您身边的装修平台！</p>
             <ul class="fr hd-bar">
                 <li>服务电话：<span>4001008031</span></li>
-                <li><a href="/login/">[登录]</a></li>
-                <li class="active"><a href="/register/">[注册]</a></li>
+                <li><a href="{% url 'login' %}">[登录]</a></li>
+                <li class="active"><a href="{% url 'register' %}">[注册]</a></li>
             </ul>
         </div>
     </div>
@@ -86,33 +85,28 @@
                 </div>
                 <div class="tab-form">
                     <form id="mobile_register_form" method="post" action="{% url 'register' %}" autocomplete="off">
-                        {% csrf_token %}
 
-                        <div class="form-group marb20 {% if register_get_form.errors.mobile %}errorput{% endif %}">
+                        <div class="form-group marb20 {% if register_post_form.errors.mobile %}errorput{% endif %}">
                             <input id="jsRegMobile" name="mobile" type="text" placeholder="请输入您的手机号码">
                         </div>
                         <div class="form-group marb20 blur" id="jsRefreshCode">
                             {{ register_get_form.captcha }}
-                            <input name="captcha" type="text" placeholder="请输入图中验证码">
                         </div>
-{#                        <div class="clearfix">#}
-{#                            <div class="form-group marb8 verify-code ">#}
-{#                                <input id="jsPhoneRegCaptcha" name="code" type="text" placeholder="输入手机验证码">#}
-{#                            </div>#}
-{#                            <input class="verify-code-btn sendcode" id="jsSendCode" value="发送验证码">#}
-{#                        </div>#}
-                        <div class="form-group marb8 {% if register_get_form.errors.mobile %}errorput{% endif %}">
+                        <div class="clearfix">
+                            <div class="form-group marb8 verify-code {% if register_post_form.errors.code %}errorput{% endif %}">
+                                <input id="jsPhoneRegCaptcha" name="code" type="text" placeholder="输入手机验证码">
+                            </div>
+                            <input class="verify-code-btn sendcode" id="jsSendCode" value="发送验证码">
+                        </div>
+                        <div class="form-group marb8 {% if register_post_form.errors.password %}errorput{% endif %}">
                             <input id="jsPhoneRegPwd" name="password" type="password" placeholder="请输入6-20位非中文字符密码">
                         </div>
-                        <div class="error btns" id="jsMobileTips" >
-                            {% for key, error in register_get_form.errors.items %}{{ error }}{% endfor %}
-                        </div>
+                        <div class="error btns" id="jsMobileTips" >{% if register_post_form.errors %}{% for key, error in register_post_form.errors.items %}{{ error }}{% endfor %}{% else %}{{ msg }}{% endif %}</div>
                         <div class="auto-box marb8">
 
                         </div>
-                        <input  class="btn btn-green" name="register-user" type="submit" placeholder="register">
-{#                        <input class="btn btn-green" id="jsMobileRegBtn" type="button" value="注册并登录">#}
-{#                    <input type="hidden" name="csrfmiddlewaretoken" value="r20XuUA2E7Aw0becQXwBbl57JQLgmKXrBBLY1FlPzoKyjZxXrwHVn9cvfwDxXFco">#}
+                        <input class="btn btn-green" id="jsMobileRegBtn" type="button" value="注册并登录">
+                    {% csrf_token %}
                     </form>
                 </div>
                 <p class="form-p">已有账号？<a href="http://192.168.43.243:8000/login/">[立即登录]</a></p>

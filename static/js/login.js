@@ -128,7 +128,6 @@ $(function() {
             beforeSend:function(XMLHttpRequest){
                 $sendBtn.val("发送中...");
                 $sendBtn.attr("disabled","disabled");
-          		daojishi(60, '#jsSendCode')
             },
             success: function(data){
                 $sendBtn.removeAttr("disabled");
@@ -146,8 +145,7 @@ $(function() {
                 }else if(data.status == 'success'){
                     Dml.fun.showErrorTips($tipsId, "短信验证码已发送");
                     $sendBtn.attr("disabled","disabled");
-                    // show_send_sms(60);
-                    daojishi(60, '#jsSendCode')
+                    show_send_sms(60);
                 }
             }
         });
@@ -172,30 +170,14 @@ $(function() {
 
     //重发送短信验证码计时
     function show_send_sms(time){
-        $('#jsSendCode').val(time+"秒后重发");
-        if(time<=0){
-            clearTimeout(send_sms_time);
-            $('#jsMobileTips').hide(500);
-             $('#jsSendCode').val("发送验证码").removeAttr("disabled");
-            return;
-        }
-        time--;
-        send_sms_time = setTimeout("show_send_sms("+time+")", 1000);
-    };
-
-    //倒计时
-    function daojishi(seconds,obj){
-        if (seconds > 1){
-                seconds--;
-                $('#jsSendCode').val(seconds+"秒后重发").attr("disabled", true);
-                // $(obj).text(seconds+"秒后重发").attr("disabled", true);//禁用按钮
-                // 定时1秒调用一次
-                setTimeout(function(){
-                    daojishi(seconds,obj);
-                },1000);
-            }else{
-                // $(obj).text("获取验证码").attr("disabled", false);//启用按钮
-                $('#jsSendCode').val("发送验证码").removeAttr("disabled");
-            }
+    $('#jsSendCode').val(time+"秒后重发");
+    if(time<=0){
+        clearTimeout(send_sms_time);
+        $('#jsMobileTips').hide(500);
+         $('#jsSendCode').val("发送验证码").removeAttr("disabled");
+        return;
     }
+    time--;
+    send_sms_time = setTimeout("show_send_sms("+time+")", 1000);
+}
 });

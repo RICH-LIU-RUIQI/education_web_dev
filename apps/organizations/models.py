@@ -1,24 +1,15 @@
-# _*_ encoding:utf-8 _*_
-from __future__ import unicode_literals
-from datetime import datetime
-
 from django.db import models
-# from DjangoUeditor.models import UEditorField
-from django.contrib.auth import get_user_model
+from DjangoUeditor.models import UEditorField
 
 from apps.users.models import BaseModel
-# from apps.courses.models import Course
-
-# Create your models here.
-UserProfile = get_user_model()  # get from setting
 
 
-class CityDict(BaseModel):
-    name = models.CharField(max_length=20, verbose_name="city")
-    desc = models.CharField(max_length=200, verbose_name="description")
+class City(BaseModel):
+    name = models.CharField(max_length=20, verbose_name=u"城市名")
+    desc = models.CharField(max_length=200, verbose_name=u"描述")
 
     class Meta:
-        verbose_name = "org city"
+        verbose_name = "城市"
         verbose_name_plural = verbose_name
 
     def __str__(self):
@@ -26,88 +17,55 @@ class CityDict(BaseModel):
 
 
 class CourseOrg(BaseModel):
-    name = models.CharField(max_length=50, verbose_name="org name")
-    desc = models.TextField(verbose_name='description of org')
-    tag = models.CharField(default="konwn", max_length=10, verbose_name="organization reputation")
-    category = models.CharField(default="pxjg", verbose_name=u"organization category", max_length=20,
-                                choices=(("pxjg","organization"),("gr","personal"),("gx","college")))
-    click_nums = models.IntegerField(default=0, verbose_name=u"click")
-    fav_nums = models.IntegerField(default=0, verbose_name=u"favor")
-    image = models.ImageField(upload_to="org/%Y/%m", verbose_name=u"logo", max_length=100)
-    address = models.CharField(max_length=150, verbose_name=u"organization address")
-    city = models.ForeignKey(CityDict, verbose_name=u"city", on_delete=models.CASCADE)
-    students = models.IntegerField(default=0, verbose_name=u"people learn")
-    course_nums = models.IntegerField(default=0, verbose_name=u"course number")
-    is_auth = models.BooleanField(default=False, verbose_name='if auth')
-    is_gold = models.BooleanField(default=False, verbose_name='if gold')
+    name = models.CharField(max_length=50, verbose_name="机构名称")
+    desc = UEditorField(verbose_name="描述", width=600, height=300, imagePath="courses/ueditor/images/",
+                          filePath="courses/ueditor/files/", default="")
+    tag = models.CharField(default="全国知名", max_length=10, verbose_name="机构标签")
+    category = models.CharField(default="pxjg", verbose_name="机构类别", max_length=4,
+                                choices=(("pxjg", "培训机构"), ("gr", "个人"), ("gx", "高校")))
+    click_nums = models.IntegerField(default=0, verbose_name="点击数")
+    fav_nums = models.IntegerField(default=0, verbose_name="收藏数")
+    image = models.ImageField(upload_to="org/%Y/%m", verbose_name="logo", max_length=100)
+    address = models.CharField(max_length=150, verbose_name="机构地址")
+    students = models.IntegerField(default=0, verbose_name="学习人数")
+    course_nums = models.IntegerField(default=0, verbose_name="课程数")
+
+    is_auth = models.BooleanField(default=False, verbose_name="是否认证")
+    is_gold = models.BooleanField(default=False, verbose_name="是否金牌")
+
+    city = models.ForeignKey(City, on_delete=models.CASCADE, verbose_name="所在城市")
+
+    def courses(self):
+        courses = self.course_set.filter(is_classics=True)[:3]
+        return courses
 
     class Meta:
-        verbose_name = u"organization"
+        verbose_name = "课程机构"
         verbose_name_plural = verbose_name
-
-    def get_all_courses(self, num=None):
-        """
-
-        :param num: the displayed courses from all courses . If None, return all courses
-        :return:
-        """
-        if num:
-            all_courses = self.course_set.filter(if_classical=True)[:num]  # opposite foreign key
-        else:
-            all_courses = self.course_set.filter(if_classical=True)  # opposite foreign key
-        return all_courses
-
-    def get_all_teachers(self, num=None):
-        """
-
-        :param num: the displayed courses from all courses . If None, return all courses
-        :return:
-        """
-        if num:
-            all_courses = self.teacher_set.filter()[:num]  # opposite foreign key
-        else:
-            all_courses = self.teacher_set.filter()  # opposite foreign key
-        return all_courses
-
-    def get_all_course(self, num=None):
-        """
-
-        :param num: the displayed courses from all courses . If None, return all courses
-        :return:
-        """
-        if num:
-            all_courses = self.course_set.filter()[:num]  # opposite foreign key
-        else:
-            all_courses = self.course_set.filter()  # opposite foreign key
-        return all_courses
-
-    # def get_teacher_nums(self):
-    #     #获取课程机构的教师数量
-    #     return self.teacher_set.all().count()
 
     def __str__(self):
         return self.name
 
-
+from apps.users.models import UserProfile
 class Teacher(BaseModel):
-    org = models.ForeignKey(CourseOrg, verbose_name=u"organization", on_delete=models.CASCADE)
-    name = models.CharField(max_length=50, verbose_name=u"teacher name")
-    work_years = models.IntegerField(default=0, verbose_name=u"working year")
-    work_company = models.CharField(max_length=50, verbose_name=u"organization name")
-    work_position = models.CharField(max_length=50, verbose_name=u"title in company")
-    points = models.CharField(max_length=50, verbose_name=u"teaching characteristic")
-    click_nums = models.IntegerField(default=0, verbose_name=u"click")
-    fav_nums = models.IntegerField(default=0, verbose_name=u"favor")
-    age = models.IntegerField(default=18, verbose_name=u"age")
-    image = models.ImageField(default='', upload_to="teacher/%Y/%m",
-                              verbose_name=u"profile image", max_length=100)
+    user = models.OneToOneField(UserProfile, on_delete=models.SET_NULL, null=True, blank=True,verbose_name="用户")
+    org = models.ForeignKey(CourseOrg, on_delete=models.CASCADE, verbose_name="所属机构")
+    name = models.CharField(max_length=50, verbose_name=u"教师名")
+    work_years = models.IntegerField(default=0, verbose_name="工作年限")
+    work_company = models.CharField(max_length=50, verbose_name="就职公司")
+    work_position = models.CharField(max_length=50, verbose_name="公司职位")
+    points = models.CharField(max_length=50, verbose_name="教学特点")
+    click_nums = models.IntegerField(default=0, verbose_name="点击数")
+    fav_nums = models.IntegerField(default=0, verbose_name="收藏数")
+    age = models.IntegerField(default=18, verbose_name="年龄")
+    image = models.ImageField(upload_to="teacher/%Y/%m", verbose_name="头像", max_length=100)
 
     class Meta:
-        verbose_name = u"teacher"
+        verbose_name = "教师"
         verbose_name_plural = verbose_name
 
     def __str__(self):
         return self.name
 
-    def get_course_nums(self):
+    def course_nums(self):
         return self.course_set.all().count()
